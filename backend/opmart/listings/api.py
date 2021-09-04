@@ -1,0 +1,9 @@
+from rest_framework import viewsets
+
+from opmart.listings.models import Category
+from opmart.listings.serializers import CategorySerializer
+
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.order_by("name")
+    serializer_class = CategorySerializer

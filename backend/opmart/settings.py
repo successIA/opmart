@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # THIRD PARTY APPS
+    "rest_framework",
     # PROJECT APPS
     "opmart.accounts",
     "opmart.listings",
