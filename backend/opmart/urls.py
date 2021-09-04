@@ -4,10 +4,11 @@ from django.urls import include, path
 
 from rest_framework import routers
 
-from opmart.listings.api import CategoryViewSet
+from opmart.listings.api import CategoryViewSet, ListingViewSet
 
 router = routers.DefaultRouter()
 router.register("categories", CategoryViewSet, basename="categories")
+router.register("listings", ListingViewSet, basename="listings")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
