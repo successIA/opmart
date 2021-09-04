@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # PROJECT APPS
     "opmart.accounts",
+    "opmart.listings",
 ]
 
 MIDDLEWARE = [
