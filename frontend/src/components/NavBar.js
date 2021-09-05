@@ -1,8 +1,10 @@
-import { Box, Container, Divider, Typography } from "@mui/material";
 import React from "react";
-import { categoryData } from "../data/categories";
+import { Box, Container, Divider, Skeleton, Typography } from "@mui/material";
+import { useCategoriesQuery } from "../features/categories/queries";
 
-function NavBar() {
+function Navbar() {
+  const { data: categories, status } = useCategoriesQuery();
+
   return (
     <Box>
       <Box as="header">
@@ -29,11 +31,20 @@ function NavBar() {
                 px: 0,
               }}
             >
-              {categoryData.map((category) => (
-                <Box as="li">
-                  <Typography variant="body2">{category}</Typography>
-                </Box>
-              ))}
+              {status === "loading" ? (
+                <Skeleton
+                  variant="rectangular"
+                  animation="wave"
+                  width="100%"
+                  height={30}
+                />
+              ) : (
+                categories.map((category) => (
+                  <Box as="li" key={category.id}>
+                    <Typography variant="body2">{category.name}</Typography>
+                  </Box>
+                ))
+              )}
             </Box>
           </Box>
         </Container>
@@ -43,4 +54,4 @@ function NavBar() {
   );
 }
 
-export default NavBar;
+export default Navbar;

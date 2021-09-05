@@ -20,6 +20,7 @@ function ListingList() {
               flexDirection: "column",
             }}
             href="#"
+            key={item.title}
           >
             <img src={item.image} alt={item.title} />
             <Box my={1}>
