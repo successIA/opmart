@@ -1,9 +1,49 @@
-import { Box, Container, Link, Typography, useTheme } from "@mui/material";
-import React from "react";
-import listings from "./data";
+import * as React from "react";
+import { Box, Container, Link, Skeleton, Typography } from "@mui/material";
+import { useListingsQuery } from "./queries";
+
+function ListingCardSkeleton() {
+  return (
+    <Box>
+      <Skeleton variant="rectangular" width="100%" height={160} />
+      <Skeleton width="100%" />
+      <Skeleton width="30%" />
+    </Box>
+  );
+}
+
+function ListingCard({ item }) {
+  return (
+    <Link
+      sx={{
+        textDecoration: "none",
+        display: "flex",
+        flexDirection: "column",
+      }}
+      href="#"
+    >
+      <img src="https://via.placeholder.com/170" alt={item.title} />
+      <Box my={1}>
+        <Typography
+          variant="body1"
+          color={(theme) => theme.palette.grey[800]}
+          fontWeight={600}
+          textOverflow="ellipsis"
+          overflow="hidden"
+          whiteSpace="nowrap"
+        >
+          {item.title}
+        </Typography>
+        <Typography variant="body1" color={(theme) => theme.palette.grey[800]}>
+          ${item.price}
+        </Typography>
+      </Box>
+    </Link>
+  );
+}
 
 function ListingList() {
-  const theme = useTheme();
+  const { data: listings, isLoading } = useListingsQuery();
 
   return (
     <Container maxWidth="xl" sx={{ mt: 3, px: 5 }}>
@@ -12,34 +52,11 @@ function ListingList() {
         gridTemplateColumns="repeat(auto-fill, minmax(160px, 1fr))"
         gap={2}
       >
-        {listings.map((item) => (
-          <Link
-            sx={{
-              textDecoration: "none",
-              display: "flex",
-              flexDirection: "column",
-            }}
-            href="#"
-            key={item.title}
-          >
-            <img src={item.image} alt={item.title} />
-            <Box my={1}>
-              <Typography
-                variant="body1"
-                color={theme.palette.grey[800]}
-                fontWeight={600}
-                textOverflow="ellipsis"
-                overflow="hidden"
-                whiteSpace="nowrap"
-              >
-                {item.title}
-              </Typography>
-              <Typography variant="body1" color={theme.palette.grey[800]}>
-                ${item.price}
-              </Typography>
-            </Box>
-          </Link>
-        ))}
+        {isLoading
+          ? Array(18)
+              .fill()
+              .map((_, index) => <ListingCardSkeleton key={index} />)
+          : listings.map((item) => <ListingCard key={item.id} item={item} />)}
       </Box>
     </Container>
   );
