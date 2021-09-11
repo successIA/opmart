@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Box, Container, Link, Skeleton, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import { useListingsQuery } from "./queries";
 
 function ListingCardSkeleton() {
@@ -20,7 +21,8 @@ function ListingCard({ item }) {
         display: "flex",
         flexDirection: "column",
       }}
-      href="#"
+      component={RouterLink}
+      to={`/listings/${item.id}`}
     >
       <img src="https://via.placeholder.com/170" alt={item.title} />
       <Box my={1}>
