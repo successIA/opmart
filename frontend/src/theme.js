@@ -1,6 +1,22 @@
 import { createTheme } from "@mui/material";
+import { css } from "@mui/styled-engine";
 
 const theme = createTheme({
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: css`
+        html {
+          height: 100%;
+        }
+        body {
+          height: 100%;
+        }
+        #root {
+          height: 100%;
+        }
+      `,
+    },
+  },
   breakpoints: {
     values: {
       xs: 0,
