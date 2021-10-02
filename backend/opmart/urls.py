@@ -13,4 +13,5 @@ router.register("listings", ListingViewSet, basename="listings")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include(router.urls)),
+    path("accounts/", include("opmart.accounts.urls")),
 ]
