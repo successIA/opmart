@@ -11,6 +11,7 @@ class AuthenticationBackend(ModelBackend):
         if email is None or password is None:
             return
 
+        user = None
         try:
             user = User.objects.get(email__iexact=email)
         except User.DoesNotExist:

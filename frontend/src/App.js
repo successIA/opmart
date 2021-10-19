@@ -1,3 +1,4 @@
+import * as React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Box, ThemeProvider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -9,6 +10,8 @@ import theme from "./theme";
 import ListingDetail from "./features/listings/ListingDetail";
 import { useCategoriesQuery } from "./features/categories/queries";
 import CircularProgress from "./components/CircularProgress";
+import AuthDialogProvider from "./features/accounts/AuthDialogProvider";
+import { useUserQuery } from "./features/accounts/api";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,9 +22,10 @@ const queryClient = new QueryClient({
 });
 
 const AppRoute = () => {
-  const { isLoading } = useCategoriesQuery();
+  const { isLoading: isCategoryLoading } = useCategoriesQuery();
+  const { isLoading: isUserLoading } = useUserQuery();
 
-  if (isLoading) {
+  if (isCategoryLoading || isUserLoading) {
     return (
       <Box
         display="flex"
@@ -37,11 +41,13 @@ const AppRoute = () => {
 
   return (
     <Router>
-      <Navbar />
-      <Switch>
-        <Route path="/" exact component={ListingList} />
-        <Route path="/listings/:listingId" component={ListingDetail} />
-      </Switch>
+      <AuthDialogProvider>
+        <Navbar />
+        <Switch>
+          <Route path="/" exact component={ListingList} />
+          <Route path="/listings/:listingId" component={ListingDetail} />
+        </Switch>
+      </AuthDialogProvider>
     </Router>
   );
 };

@@ -1,8 +1,18 @@
 import * as React from "react";
-import { Box, Container, Divider, Link, styled } from "@mui/material";
+import {
+  Box,
+  Container,
+  Divider,
+  Link,
+  styled,
+  Typography,
+} from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
 import { useCategoriesQuery } from "../../features/categories/queries";
 import CategoryBar from "./CategoryBar";
+import { useAuthDialog } from "../../features/accounts/AuthDialogProvider";
+import { useLogoutMutation, useUserQuery } from "../../features/accounts/api";
+import UserMenu from "./UserMenu";
 
 const Brand = styled("h1")`
   font-weight: 900;
@@ -12,12 +22,19 @@ const Brand = styled("h1")`
 `;
 
 function Navbar() {
+  const { data: user } = useUserQuery();
+  const { mutate } = useLogoutMutation();
   const { data } = useCategoriesQuery();
+  const showAuthDialog = useAuthDialog();
+
+  const handleLogout = () => {
+    mutate(undefined, { onSuccess: window.location.assign("/") });
+  };
 
   return (
     <Box as="header">
       <Container maxWidth="xl" sx={{ px: 6 }}>
-        <Box sx={{ display: "flex", justifyContent: "center", pt: 1 }}>
+        <Box display="flex" justifyContent="space-between" pt={1}>
           <Link
             component={RouterLink}
             to={`/`}
@@ -25,6 +42,24 @@ function Navbar() {
           >
             <Brand>OpMart</Brand>
           </Link>
+
+          <Box display="flex" alignItems="center">
+            {user ? (
+              <UserMenu user={user} onLogout={handleLogout} />
+            ) : (
+              <Link
+                component="button"
+                color="inherit"
+                underline="none"
+                variant="outlined"
+                onClick={() => showAuthDialog("login")}
+              >
+                <Typography component="span" variant="body1" fontWeight={600}>
+                  Log in
+                </Typography>
+              </Link>
+            )}
+          </Box>
         </Box>
         <CategoryBar categories={data} />
       </Container>

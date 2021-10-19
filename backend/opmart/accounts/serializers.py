@@ -3,6 +3,9 @@ from django.contrib.auth import (
     get_user_model,
     password_validation,
 )
+from django.contrib.auth.password_validation import (
+    UserAttributeSimilarityValidator,
+)
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.utils.translation import gettext as _
@@ -36,17 +39,22 @@ class RegisterSerializer(serializers.Serializer):
             raise serializers.ValidationError(msg)
         return value
 
-    def check_password(self, value, user):
-        try:
-            password_validation.validate_password(value, user)
-        except ValidationError as e:
-            raise serializers.ValidationError({"password": e.messages})
+    def validate_password(self, value):
+        password_validation.validate_password(value)
         return value
 
+    def check_password_similarity(self, password, user):
+        try:
+            UserAttributeSimilarityValidator().validate(password, user)
+        except ValidationError as e:
+            raise serializers.ValidationError({"password": e.messages})
+
     def save(self):
+        password = self.validated_data["password"]
         user = User(**self.validated_data)
-        self.check_password(self.validated_data["password"], user)
-        user.set_password(self.validated_data["password"])
+        self.check_password_similarity(password, user)
+
+        user.set_password(password)
         user.save()
         return user
 
@@ -58,7 +66,7 @@ class LoginSerializer(serializers.Serializer):
     def save(self):
         user = authenticate(request=self.context["request"], **self.validated_data)
         if not user:
-            msg = _("Unable to log in with the provided credentials.")
+            msg = _("The email or password you entered is invalid.")
             raise serializers.ValidationError({"detail": msg})
 
         user.last_login = timezone.now()
