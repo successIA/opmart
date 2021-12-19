@@ -15,18 +15,25 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name", "slug"]
 
 
+class ListingImageSerializer(serializers.ModelSerializer):
+    image_small = serializers.SerializerMethodField(read_only=True)
+
+    def get_image_small(self, value):
+        request = self.context["request"]
+        return request.build_absolute_uri(value.image_small.url)
+
+    class Meta:
+        model = ListingImage
+        fields = ["image", "image_small"]
+
+
 class ListingSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
+    images = ListingImageSerializer(many=True)
 
     class Meta:
         model = Listing
-        fields = [
-            "id",
-            "category",
-            "title",
-            "description",
-            "price",
-        ]
+        fields = ["id", "category", "title", "description", "price", "images"]
 
 
 class ListingCreateSerializer(serializers.ModelSerializer):
