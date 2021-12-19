@@ -20,7 +20,57 @@ class ListingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Listing
-        fields = ["id", "category", "title", "description", "price"]
+        fields = [
+            "id",
+            "category",
+            "title",
+            "description",
+            "price",
+        ]
+
+
+class ListingCreateSerializer(serializers.ModelSerializer):
+    images = serializers.PrimaryKeyRelatedField(
+        queryset=ListingImage.objects.filter(listing=None), many=True
+    )
+
+    def validate_images(self, value):
+        request = self.context["request"]
+
+        for listing_image in value:
+            if request.user != listing_image.owner:
+                raise serializers.ValidationError("Invalid request")
+
+        if len(value) > MAX_IMAGE_COUNT:
+            msg = _("A listing cannot have more than 10 images.")
+            raise serializers.ValidationError(msg)
+
+        return value
+
+    class Meta:
+        model = Listing
+        fields = [
+            "id",
+            "category",
+            "title",
+            "description",
+            "price",
+            "images",
+        ]
+
+    @transaction.atomic
+    def create(self, validated_data):
+        request = self.context["request"]
+        listing_images = validated_data.pop("images")
+
+        listing = Listing.objects.create(owner=request.user, **validated_data)
+
+        for listing_image in listing_images:
+            listing_image.listing = listing
+
+        ListingImage.objects.bulk_update(listing_images, ["listing"])
+
+        return listing
 
 
 class ListingImageSerializer(serializers.Serializer):

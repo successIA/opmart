@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from opmart.listings.models import Category, Listing, ListingImage
 from opmart.listings.serializers import (
     CategorySerializer,
+    ListingCreateSerializer,
     ListingImageSerializer,
     ListingSerializer,
 )
@@ -19,10 +20,20 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer
 
 
-class ListingViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class ListingViewSet(
+    mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+):
     queryset = Listing.objects.order_by("-created_at")
     permission_classes = [IsAuthenticatedOrReadOnly]
-    serializer_class = ListingSerializer
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return ListingCreateSerializer
+        return ListingSerializer
+
+        # def perform_create(self, serializer):
+        #     # return super().perform_create(serializer)
+        #     pass
 
 
 class ListingImageViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
