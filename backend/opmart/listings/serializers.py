@@ -33,7 +33,15 @@ class ListingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Listing
-        fields = ["id", "category", "title", "description", "price", "images"]
+        fields = [
+            "id",
+            "category",
+            "title",
+            "description",
+            "price",
+            "condition",
+            "images",
+        ]
 
 
 class ListingCreateSerializer(serializers.ModelSerializer):
@@ -60,8 +68,9 @@ class ListingCreateSerializer(serializers.ModelSerializer):
             "id",
             "category",
             "title",
-            "description",
             "price",
+            "condition",
+            "description",
             "images",
         ]
 

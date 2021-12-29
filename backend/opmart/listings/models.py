@@ -17,6 +17,11 @@ def upload_to(_, filename):
     return os.path.join("images", new_name[:2], new_name[2:4], new_filename)
 
 
+class Condition(models.TextChoices):
+    USED = "US", "Used"
+    NEW = "NE", "New"
+
+
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
     slug = models.SlugField(max_length=140, unique=True)
@@ -41,6 +46,9 @@ class Listing(models.Model):
     title = models.CharField(max_length=256)
     description = models.CharField(max_length=1000)
     price = models.DecimalField(max_digits=14, decimal_places=2)
+    condition = models.CharField(
+        max_length=2, choices=Condition.choices, default=Condition.USED
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
