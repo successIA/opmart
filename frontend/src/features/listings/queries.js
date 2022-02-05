@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import api from "../../api";
 
 const fetchListings = async () => {
@@ -19,3 +19,10 @@ export const useListingQuery = (listingId) =>
     queryKey: ["listings", listingId],
     queryFn: () => fetchListing(listingId),
   });
+
+const createListing = async (data) => {
+  const response = await api.post("/listings/", data);
+  return response.data;
+};
+
+export const useListingCreateMutation = (data) => useMutation(createListing);

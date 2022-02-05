@@ -10,6 +10,12 @@ const TextField = styled(MuiTextField)(({ theme }) => ({
   "& .MuiOutlinedInput-input": {
     padding: "20px 12px 6px 12px",
   },
+  "& .MuiInputBase-multiline": {
+    padding: "16.5px 11.5px",
+  },
+  "& .MuiInputBase-inputMultiline": {
+    padding: "10px 0",
+  },
   "& .MuiInputLabel-outlined": {
     transform: "translate(12px, 13px) scale(1)",
   },

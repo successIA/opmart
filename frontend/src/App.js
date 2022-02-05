@@ -1,6 +1,7 @@
 import * as React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Box, ThemeProvider } from "@mui/material";
+import { SnackbarProvider } from "notistack";
+import { Box, Grow, ThemeProvider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -12,6 +13,7 @@ import { useCategoriesQuery } from "./features/categories/queries";
 import CircularProgress from "./components/CircularProgress";
 import AuthDialogProvider from "./features/accounts/AuthDialogProvider";
 import { useUserQuery } from "./features/accounts/api";
+import AddListing from "./features/listings/AddListing";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,6 +48,7 @@ const AppRoute = () => {
         <Switch>
           <Route path="/" exact component={ListingList} />
           <Route path="/listings/:listingId" component={ListingDetail} />
+          <Route path="/new-listing" component={AddListing} />
         </Switch>
       </AuthDialogProvider>
     </Router>
@@ -55,10 +58,18 @@ const AppRoute = () => {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <AppRoute />
-      </ThemeProvider>
+      <SnackbarProvider
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        TransitionComponent={Grow}
+      >
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <AppRoute />
+        </ThemeProvider>
+      </SnackbarProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );

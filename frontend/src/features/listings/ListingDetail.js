@@ -3,11 +3,17 @@ import React from "react";
 import { useParams } from "react-router";
 import CircularProgress from "../../components/CircularProgress";
 import { useListingQuery } from "./queries";
+import { grey } from "@mui/material/colors";
 
-const Image = styled("img")({
-  objectFit: "cover",
-  display: "block",
-});
+const Image = styled("img")`
+  object-fit: cover;
+  display: block;
+  width: 100%;
+  height: 38vh;
+  @media (min-width: 600px) {
+    height: 500px;
+  } ;
+`;
 
 const ListingDetail = () => {
   const { listingId } = useParams();
@@ -30,10 +36,12 @@ const ListingDetail = () => {
             overflow="hidden"
           >
             <Image
-              src="https://via.placeholder.com/800x500"
-              width="100%"
-              height="100%"
-              alt="detail"
+              src={
+                data.images[0]
+                  ? data.images[0].image
+                  : "https://via.placeholder.com/800x500"
+              }
+              alt={data.title}
             />
           </Box>
         </Grid>

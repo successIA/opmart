@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
   Box,
+  Button,
   Container,
   Divider,
   Link,
@@ -8,12 +9,12 @@ import {
   Typography,
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
+import { Plus } from "react-feather";
 import { useCategoriesQuery } from "../../features/categories/queries";
 import CategoryBar from "./CategoryBar";
 import { useAuthDialog } from "../../features/accounts/AuthDialogProvider";
 import { useLogoutMutation, useUserQuery } from "../../features/accounts/api";
 import UserMenu from "./UserMenu";
-
 const Brand = styled("h1")`
   font-weight: 900;
   font-size: 1.8rem;
@@ -45,7 +46,25 @@ function Navbar() {
 
           <Box display="flex" alignItems="center">
             {user ? (
-              <UserMenu user={user} onLogout={handleLogout} />
+              <>
+                <Button
+                  component={RouterLink}
+                  to="/new-listing"
+                  variant="outlined"
+                  size="medium"
+                  startIcon={<Plus size={20} />}
+                  disableElevation
+                  sx={{
+                    mr: 3,
+                    fontWeight: 600,
+                    height: "35px",
+                    textTransform: "none",
+                  }}
+                >
+                  Add listing
+                </Button>
+                <UserMenu user={user} onLogout={handleLogout} />
+              </>
             ) : (
               <Link
                 component="button"

@@ -1,7 +1,25 @@
 import * as React from "react";
-import { Box, Container, Link, Skeleton, Typography } from "@mui/material";
+import {
+  Box,
+  Container,
+  Link,
+  Skeleton,
+  styled,
+  Typography,
+} from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
+import { grey } from "@mui/material/colors";
+
 import { useListingsQuery } from "./queries";
+
+const Image = styled("img")`
+  display: block;
+  object-fit: cover;
+  width: 100%;
+  height: 150px;
+  border: ${() => `1px solid ${grey[200]}`};
+  border-radius: 4px;
+`;
 
 function ListingCardSkeleton() {
   return (
@@ -24,7 +42,14 @@ function ListingCard({ item }) {
       component={RouterLink}
       to={`/listings/${item.id}`}
     >
-      <img src="https://via.placeholder.com/170" alt={item.title} />
+      <Image
+        src={
+          item.images[0]
+            ? item.images[0].image_small
+            : "https://via.placeholder.com/170"
+        }
+        alt={item.title}
+      />
       <Box my={1}>
         <Typography
           variant="body1"
@@ -53,6 +78,7 @@ function ListingList() {
         display="grid"
         gridTemplateColumns="repeat(auto-fill, minmax(160px, 1fr))"
         gap={2}
+        width="100%"
       >
         {isLoading
           ? Array(18)
