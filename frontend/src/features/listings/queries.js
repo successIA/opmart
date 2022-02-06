@@ -26,3 +26,11 @@ const createListing = async (data) => {
 };
 
 export const useListingCreateMutation = (data) => useMutation(createListing);
+
+const updateListing = async (id, data) => {
+  const response = await api.put(`/listings/${id}/`, data);
+  return response.data;
+};
+
+export const useListingUpdateMutation = (id) =>
+  useMutation((data) => updateListing(id, data));

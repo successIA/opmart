@@ -13,7 +13,8 @@ import { useCategoriesQuery } from "./features/categories/queries";
 import CircularProgress from "./components/CircularProgress";
 import AuthDialogProvider from "./features/accounts/AuthDialogProvider";
 import { useUserQuery } from "./features/accounts/api";
-import AddListing from "./features/listings/AddListing";
+import ListingAdd from "./features/listings/ListingAdd";
+import ListingEdit from "./features/listings/ListingEdit";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -48,7 +49,8 @@ const AppRoute = () => {
         <Switch>
           <Route path="/" exact component={ListingList} />
           <Route path="/listings/:listingId" component={ListingDetail} />
-          <Route path="/new-listing" component={AddListing} />
+          <Route path="/new-listing" component={ListingAdd} />
+          <Route path="/edit-listing/:listingId" component={ListingEdit} />
         </Switch>
       </AuthDialogProvider>
     </Router>

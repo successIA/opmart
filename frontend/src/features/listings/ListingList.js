@@ -45,7 +45,7 @@ function ListingCard({ item }) {
       <Image
         src={
           item.images[0]
-            ? item.images[0].image_small
+            ? item.images[0].small
             : "https://via.placeholder.com/170"
         }
         alt={item.title}
