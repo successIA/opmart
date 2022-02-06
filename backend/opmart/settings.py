@@ -136,6 +136,7 @@ CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
+    "COERCE_DECIMAL_TO_STRING": False,
 }
 
 # ImageKit Configuration

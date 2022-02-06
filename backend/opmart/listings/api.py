@@ -1,16 +1,15 @@
-from rest_framework import mixins, status, viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
     IsAuthenticatedOrReadOnly,
 )
-from rest_framework.response import Response
 
 from opmart.listings.models import Category, Listing, ListingImage
 from opmart.listings.serializers import (
     CategorySerializer,
-    ListingCreateSerializer,
+    ListingCreateUpdateSerializer,
     ListingImageSerializer,
     ListingSerializer,
 )
@@ -23,17 +22,18 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ListingViewSet(
-    mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = Listing.objects.prefetch_related("images").order_by("-created_at")
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_serializer_class(self):
-        if self.action == "create":
-            return ListingCreateSerializer
+        if self.action in ["create", "update"]:
+            return ListingCreateUpdateSerializer
         return ListingSerializer
 
 
