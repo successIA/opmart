@@ -31,6 +31,14 @@ const theme = createTheme({
       xl: 1536,
     },
   },
+  palette: {
+    secondary: {
+      main: "#6c757d",
+      light: "#71878c",
+      dark: "#666768",
+      contrastText: "#fff",
+    },
+  },
   typography: {
     fontFamily: [
       "Public Sans",

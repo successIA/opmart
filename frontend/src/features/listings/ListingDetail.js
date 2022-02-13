@@ -2,16 +2,30 @@ import * as React from "react";
 import {
   Box,
   Button,
+  ClickAwayListener,
   Container,
+  Divider,
   Grid,
+  Grow,
+  IconButton,
+  ListItemIcon,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
   styled,
   Typography,
 } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import { Link as RouterLink } from "react-router-dom";
-import { useParams } from "react-router";
+import { Edit3, Trash2, MoreHorizontal } from "react-feather";
+import { useHistory, useParams } from "react-router";
+
 import CircularProgress from "../../components/CircularProgress";
 import { useListingQuery } from "./queries";
-import { Edit3 } from "react-feather";
+import { useListingDeleteMutation } from "./queries";
+import { useSnackbar } from "notistack";
+import { useUserQuery } from "../accounts/api";
 
 const Image = styled("img")`
   object-fit: cover;
@@ -23,9 +37,112 @@ const Image = styled("img")`
   } ;
 `;
 
+function ManageMenu({ listingId }) {
+  const [open, setOpen] = React.useState(false);
+  const prevOpen = React.useRef(open);
+  const anchorRef = React.useRef(null);
+  const { enqueueSnackbar } = useSnackbar();
+  const { mutate } = useListingDeleteMutation(listingId);
+  const history = useHistory();
+
+  React.useEffect(() => {
+    if (prevOpen.current === true && open === false) {
+      anchorRef.current.focus();
+    }
+    prevOpen.current = open;
+  }, [open]);
+
+  const handleClose = (event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) {
+      return;
+    }
+    setOpen(false);
+  };
+
+  function handleListKeyDown(event) {
+    if (event.key === "Tab") {
+      event.preventDefault();
+      handleClose(false);
+    } else if (event.key === "Escape") {
+      handleClose(false);
+    }
+  }
+
+  function handleDelete() {
+    mutate(undefined, {
+      onSuccess: () => {
+        history.replace("/");
+        enqueueSnackbar("Listing has been deleted", {
+          variant: "success",
+        });
+      },
+    });
+  }
+
+  return (
+    <Box>
+      <IconButton
+        ref={anchorRef}
+        onClick={() => setOpen(!open)}
+        sx={{ mb: -1.1 }}
+      >
+        <MoreHorizontal size={20} />
+      </IconButton>
+
+      <Popper
+        open={open}
+        anchorEl={anchorRef.current}
+        role={undefined}
+        placement="bottom-start"
+        transition
+        disablePortal
+      >
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin:
+                placement === "bottom-start" ? "right top" : "right bottom",
+            }}
+          >
+            <Paper
+              elevation={1}
+              sx={{ border: `1px solid ${grey[300]}`, zIndex: 40 }}
+            >
+              <ClickAwayListener onClickAway={handleClose}>
+                <Box>
+                  <MenuList
+                    id="user-menu"
+                    aria-labelledby="user-menu-button"
+                    onKeyDown={handleListKeyDown}
+                    dense
+                    sx={{ py: 0 }}
+                  >
+                    <MenuItem
+                      sx={{ px: 1.5 }}
+                      key="Edit Listing"
+                      onClick={handleDelete}
+                    >
+                      <ListItemIcon>
+                        <Trash2 size={18} />
+                      </ListItemIcon>
+                      Delete
+                    </MenuItem>
+                  </MenuList>
+                </Box>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
+    </Box>
+  );
+}
+
 const ListingDetail = () => {
   const { listingId } = useParams();
   const { data, isLoading } = useListingQuery(listingId);
+  const { data: user } = useUserQuery();
 
   if (isLoading)
     return (
@@ -59,27 +176,61 @@ const ListingDetail = () => {
           pl={{ xs: 0, md: 3 }}
           mb={3}
         >
-          <Box mt={{ xs: 3, md: 0 }} mb={2}>
-            <Typography variant="h5" component="h2" mb={1}>
+          <Box>
+            <Typography
+              variant="h5"
+              component="h2"
+              mb={1}
+              sx={{ wordBreak: "break-all" }}
+            >
               {data.title}
             </Typography>
-            <Typography variant="h4">${data.price}</Typography>
-          </Box>
-          <Box>
-            <Typography>{data.description}</Typography>
-          </Box>
-          <Box mt={2}>
-            <Button
-              component={RouterLink}
-              to={`/edit-listing/${data.id}`}
-              variant="outlined"
-              color="primary"
-              sx={{ textTransform: "none" }}
-              fullWidth
-              startIcon={<Edit3 size={18} />}
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="end"
+              mb={1}
+              mt={2}
             >
-              Edit listing
-            </Button>
+              <Box mt={{ xs: 3, md: 0 }} mb={0}>
+                <Typography
+                  variant="h4"
+                  lineHeight={1}
+                  sx={{ wordBreak: "break-all" }}
+                >
+                  ${data.price}
+                </Typography>
+              </Box>
+              {user && (
+                <Box display="flex" alignItems="end">
+                  <Box display="flex" mb={-0.6}>
+                    <Button
+                      component={RouterLink}
+                      to={`/edit-listing/${data.id}`}
+                      color="secondary"
+                      sx={{
+                        textTransform: "none",
+                        mr: 0.5,
+                        border: 0,
+                        fontWeight: 600,
+                      }}
+                      startIcon={<Edit3 size={16} />}
+                      size="small"
+                    >
+                      Edit
+                    </Button>
+                  </Box>
+                  <Box sx={{ mr: -1 }}>
+                    <ManageMenu listingId={data.id} />
+                  </Box>
+                </Box>
+              )}
+            </Box>
+          </Box>
+          <Divider sx={{ mt: 2 }} />
+
+          <Box mt={2}>
+            <Typography>{data.description}</Typography>
           </Box>
         </Grid>
       </Grid>

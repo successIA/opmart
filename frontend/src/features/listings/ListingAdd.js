@@ -10,7 +10,7 @@ const ListingAdd = () => {
   const history = useHistory();
 
   const handleSuccess = (data) => {
-    enqueueSnackbar("Your item has been listed successfully", {
+    enqueueSnackbar("Your item has been successfully listed", {
       variant: "success",
     });
     history.replace(`/listings/${data.id}`);

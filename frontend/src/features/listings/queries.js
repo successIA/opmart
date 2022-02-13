@@ -25,7 +25,7 @@ const createListing = async (data) => {
   return response.data;
 };
 
-export const useListingCreateMutation = (data) => useMutation(createListing);
+export const useListingCreateMutation = () => useMutation(createListing);
 
 const updateListing = async (id, data) => {
   const response = await api.put(`/listings/${id}/`, data);
@@ -34,3 +34,11 @@ const updateListing = async (id, data) => {
 
 export const useListingUpdateMutation = (id) =>
   useMutation((data) => updateListing(id, data));
+
+const deleteListing = async (id) => {
+  const response = await api.delete(`/listings/${id}/`);
+  return response.data;
+};
+
+export const useListingDeleteMutation = (id) =>
+  useMutation(() => deleteListing(id));

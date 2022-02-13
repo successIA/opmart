@@ -137,7 +137,6 @@ function ListingForm({
     handleSubmit,
     handleChange,
     handleBlur,
-    setTouched,
     setFieldValue,
     setFieldError,
     values,
@@ -200,7 +199,6 @@ function ListingForm({
   };
 
   const handleImageChooserChange = (event) => {
-    console.log("Imag change");
     const files = Array.from(event.target.files);
     event.target.value = "";
     if (!validateImages(files)) {

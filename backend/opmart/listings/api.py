@@ -26,6 +26,7 @@ class ListingViewSet(
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
     queryset = Listing.objects.prefetch_related("images").order_by("-created_at")
