@@ -61,3 +61,11 @@ export const useLogoutMutation = () => {
     },
   });
 };
+
+const fetchUserListings = async (userId) => {
+  const response = await api.get(`/accounts/users/${userId}/listings/`);
+  return response.data;
+};
+
+export const useUserListingsQuery = (userId) =>
+  useQuery(["userListings", userId], () => fetchUserListings(userId));

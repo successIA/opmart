@@ -48,6 +48,10 @@ class ListingSerializer(serializers.ModelSerializer):
             "images",
         ]
 
+    @staticmethod
+    def setup_eager_loading(queryset):
+        return queryset.select_related("category").prefetch_related("images")
+
 
 class ListingCreateUpdateSerializer(serializers.ModelSerializer):
     images = serializers.PrimaryKeyRelatedField(
@@ -56,7 +60,6 @@ class ListingCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate_images(self, value):
         request = self.context["request"]
-
         if len(value) > MAX_IMAGE_COUNT:
             msg = _("A listing cannot have more than 10 images.")
             raise serializers.ValidationError(msg)
@@ -70,7 +73,6 @@ class ListingCreateUpdateSerializer(serializers.ModelSerializer):
             elif not self.instance and image.listing is not None:
                 msg = _("Only orphaned images are allowed.")
                 raise serializers.ValidationError(msg)
-
         return value
 
     class Meta:
@@ -96,7 +98,6 @@ class ListingCreateUpdateSerializer(serializers.ModelSerializer):
             listing_image.listing = listing
 
         ListingImage.objects.bulk_update(listing_images, ["listing"])
-
         return listing
 
     @transaction.atomic

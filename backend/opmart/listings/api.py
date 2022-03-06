@@ -29,8 +29,12 @@ class ListingViewSet(
     mixins.DestroyModelMixin,
     viewsets.GenericViewSet,
 ):
-    queryset = Listing.objects.prefetch_related("images").order_by("-created_at")
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        qs = Listing.objects.all()
+        qs = ListingSerializer.setup_eager_loading(qs)
+        return qs.order_by("-created_at")
 
     def get_serializer_class(self):
         if self.action in ["create", "update"]:

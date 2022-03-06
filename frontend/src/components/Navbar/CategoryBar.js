@@ -30,7 +30,7 @@ const NavLi = styled("li")(
   ({ theme }) => css`
     display: flex;
     align-items: center;
-    padding: ${theme.spacing(1)} 0;
+    padding: ${theme.spacing(1)} 0 0;
   `
 );
 

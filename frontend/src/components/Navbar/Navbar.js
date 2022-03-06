@@ -34,8 +34,8 @@ function Navbar() {
 
   return (
     <Box as="header">
-      <Container maxWidth="xl" sx={{ px: 6 }}>
-        <Box display="flex" justifyContent="space-between" pt={1}>
+      <Container maxWidth="xl" sx={{ px: 6, py: 1 }}>
+        <Box display="flex" justifyContent="space-between">
           <Link
             component={RouterLink}
             to={`/`}

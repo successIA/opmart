@@ -21,6 +21,16 @@ const theme = createTheme({
         disableRipple: true,
       },
     },
+    MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+        },
+      },
+    },
   },
   breakpoints: {
     values: {

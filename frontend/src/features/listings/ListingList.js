@@ -42,14 +42,7 @@ function ListingCard({ item }) {
       component={RouterLink}
       to={`/listings/${item.id}`}
     >
-      <Image
-        src={
-          item.images[0]
-            ? item.images[0].small
-            : "https://via.placeholder.com/170"
-        }
-        alt={item.title}
-      />
+      <Image src={item.images[0].small} alt={item.title} />
       <Box my={1}>
         <Typography
           variant="body1"

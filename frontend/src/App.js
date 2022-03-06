@@ -15,6 +15,7 @@ import AuthDialogProvider from "./features/accounts/AuthDialogProvider";
 import { useUserQuery } from "./features/accounts/api";
 import ListingAdd from "./features/listings/ListingAdd";
 import ListingEdit from "./features/listings/ListingEdit";
+import Account from "./features/accounts/Account";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,6 +52,7 @@ const AppRoute = () => {
           <Route path="/listings/:listingId" component={ListingDetail} />
           <Route path="/new-listing" component={ListingAdd} />
           <Route path="/edit-listing/:listingId" component={ListingEdit} />
+          <Route path="/account" exact component={Account} />
         </Switch>
       </AuthDialogProvider>
     </Router>

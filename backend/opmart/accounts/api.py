@@ -1,19 +1,20 @@
 from django.contrib.auth import get_user_model
 
-from rest_framework import status, viewsets
-from rest_framework.decorators import action, permission_classes
+from knox.models import AuthToken
+from rest_framework import mixins, serializers, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from knox.models import AuthToken
 from opmart.accounts.serializers import (
     LoginSerializer,
     RegisterSerializer,
     UserDetailSerializer,
     UserDetailTokenSerializer,
 )
+from opmart.listings.serializers import ListingSerializer
 
 User = get_user_model()
 
@@ -66,3 +67,16 @@ class UserDetailView(RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class UserViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = serializers.Serializer
+
+    @action(detail=True, permission_classes=[AllowAny])
+    def listings(self, request, pk=None):
+        user = self.get_object()
+        qs = ListingSerializer.setup_eager_loading(user.listings)
+        qs = qs.order_by("-created_at")
+        serializer = ListingSerializer(qs, many=True, context={"request": request})
+        return Response(serializer.data)

@@ -26,6 +26,7 @@ import { useListingQuery } from "./queries";
 import { useListingDeleteMutation } from "./queries";
 import { useSnackbar } from "notistack";
 import { useUserQuery } from "../accounts/api";
+import ListingDeleteConfirmDialog from "../accounts/ListingDeleteConfirmDialog";
 
 const Image = styled("img")`
   object-fit: cover;
@@ -41,9 +42,10 @@ function ManageMenu({ listingId }) {
   const [open, setOpen] = React.useState(false);
   const prevOpen = React.useRef(open);
   const anchorRef = React.useRef(null);
-  const { enqueueSnackbar } = useSnackbar();
-  const { mutate } = useListingDeleteMutation(listingId);
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
+  const { mutate, isLoading: isDeleting } = useListingDeleteMutation();
+  const [showConfirmDialog, setShowConfirmDialog] = React.useState(false);
 
   React.useEffect(() => {
     if (prevOpen.current === true && open === false) {
@@ -59,17 +61,17 @@ function ManageMenu({ listingId }) {
     setOpen(false);
   };
 
-  function handleListKeyDown(event) {
+  const handleListKeyDown = (event) => {
     if (event.key === "Tab") {
       event.preventDefault();
       handleClose(false);
     } else if (event.key === "Escape") {
       handleClose(false);
     }
-  }
+  };
 
-  function handleDelete() {
-    mutate(undefined, {
+  const handleListingDelete = () => {
+    mutate(listingId, {
       onSuccess: () => {
         history.replace("/");
         enqueueSnackbar("Listing has been deleted", {
@@ -77,7 +79,12 @@ function ManageMenu({ listingId }) {
         });
       },
     });
-  }
+  };
+
+  const handleDeleteMenuItemClick = (event) => {
+    setShowConfirmDialog(true);
+    handleClose(event);
+  };
 
   return (
     <Box>
@@ -88,6 +95,13 @@ function ManageMenu({ listingId }) {
       >
         <MoreHorizontal size={20} />
       </IconButton>
+
+      <ListingDeleteConfirmDialog
+        isOpen={showConfirmDialog}
+        onCancel={() => setShowConfirmDialog(false)}
+        onSubmit={handleListingDelete}
+        isSubmitting={isDeleting}
+      />
 
       <Popper
         open={open}
@@ -121,7 +135,7 @@ function ManageMenu({ listingId }) {
                     <MenuItem
                       sx={{ px: 1.5 }}
                       key="Edit Listing"
-                      onClick={handleDelete}
+                      onClick={handleDeleteMenuItemClick}
                     >
                       <ListItemIcon>
                         <Trash2 size={18} />
@@ -160,14 +174,7 @@ const ListingDetail = () => {
             borderRadius={1}
             overflow="hidden"
           >
-            <Image
-              src={
-                data.images[0]
-                  ? data.images[0].large
-                  : "https://via.placeholder.com/800x500"
-              }
-              alt={data.title}
-            />
+            <Image src={data.images[0].large} alt={data.title} />
           </Box>
         </Grid>
         <Grid

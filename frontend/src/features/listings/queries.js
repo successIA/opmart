@@ -40,5 +40,5 @@ const deleteListing = async (id) => {
   return response.data;
 };
 
-export const useListingDeleteMutation = (id) =>
-  useMutation(() => deleteListing(id));
+export const useListingDeleteMutation = () =>
+  useMutation((id) => deleteListing(id));

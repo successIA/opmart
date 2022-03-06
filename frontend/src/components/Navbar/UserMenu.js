@@ -3,15 +3,19 @@ import {
   ClickAwayListener,
   Divider,
   Grow,
+  ListItemText,
   MenuItem,
   MenuList,
   Paper,
   Popper,
   styled,
   Typography,
+  Link,
 } from "@mui/material";
 import * as React from "react";
 import { grey } from "@mui/material/colors";
+import { Link as RouterLink } from "react-router-dom";
+
 import { getInitials, getName } from "../../utils/user";
 
 const UserAvatar = styled(
@@ -130,15 +134,30 @@ function UserMenu({ user, onLogout }) {
                     id="user-menu"
                     aria-labelledby="user-menu-button"
                     onKeyDown={handleListKeyDown}
-                    dense
                     sx={{ py: 0 }}
+                    dense
                   >
                     <MenuItem
-                      sx={{ px: 1.5 }}
-                      key="Log out"
-                      onClick={handleLogoutClick}
+                      key="Profile"
+                      sx={{ p: 0, display: "flex" }}
+                      onClick={handleClose}
                     >
-                      Log out
+                      <Link
+                        component={RouterLink}
+                        to="/account"
+                        sx={{
+                          textDecoration: "none",
+                          color: "inherit",
+                          flex: 1,
+                          px: 2,
+                          py: "6px",
+                        }}
+                      >
+                        <ListItemText>Account</ListItemText>
+                      </Link>
+                    </MenuItem>
+                    <MenuItem key="Log out" onClick={handleLogoutClick}>
+                      <ListItemText>Log out</ListItemText>
                     </MenuItem>
                   </MenuList>
                 </Box>
